@@ -28,45 +28,46 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mpi.h"    
 
 extern double getTime();
-extern void   printProgress( double perc, double time );
+extern void   printProgress( double perc, double time, int rank );
 
 extern void rayMarch (const RenderParams &render_params, const vec3 &from, const vec3  &to, pixelData &pix_data);
 extern vec3 getColour(const pixelData &pixData, const RenderParams &render_params,
-    const vec3 &from, const vec3  &direction);
+  const vec3 &from, const vec3  &direction);
 
 void createRow(int j, int width, const CameraParams &camera_params, const RenderParams &renderer_params,vec3 &to, vec3 &from,  double *farPoint, pixelData &pix_data, unsigned char * image) {
 
 //for each column pixel in the row
   for(int i = 0; i <width; i++)
   {
-      vec3 color;
-      if( renderer_params.super_sampling == 1 )
-      {
-          vec3 samples[9];
-          int idx = 0;
-          for(int ssj = -1; ssj < 2; ssj++){
-            for(int ssi = -1; ssi< 2; ssi++){
-              UnProject(i+ssi*0.5, j+ssj*0.5, camera_params, farPoint);
+    vec3 color;
+    if( renderer_params.super_sampling == 1 )
+    {
+      vec3 samples[9];
+      int idx = 0;
+      for(int ssj = -1; ssj < 2; ssj++){
+        for(int ssi = -1; ssi< 2; ssi++){
+
+          UnProject(i+ssi*0.5, j+ssj*0.5, camera_params, farPoint);
 
           // to = farPoint - camera_params.camPos
-              to = SubtractDoubleDouble(farPoint,camera_params.camPos);
-              to.Normalize();
+          to = SubtractDoubleDouble(farPoint,camera_params.camPos);
+          to.Normalize();
 
           //render the pixel
-              rayMarch(renderer_params, from, to, pix_data);
+          rayMarch(renderer_params, from, to, pix_data);
 
           //get the colour at this pixel
-              samples[idx] = getColour(pix_data, renderer_params, from, to);
-              idx++;
-          }
+          samples[idx] = getColour(pix_data, renderer_params, from, to);
+          idx++;
+        }
       }
       color = (samples[0]*0.05 + samples[1]*0.1 + samples[2]*0.05 + 
        samples[3]*0.1  + samples[4]*0.4 + samples[5]*0.1  + 
        samples[6]*0.05 + samples[7]*0.1 + samples[8]*0.05);
 
-  }
-  else
-  {
+    }
+    else
+    {
           // get point on the 'far' plane
           // since we render one frame only, we can use the more specialized method
       UnProject(i, j, camera_params, farPoint);
@@ -80,14 +81,14 @@ void createRow(int j, int width, const CameraParams &camera_params, const Render
 
           //get the colour at this pixel
       color = getColour(pix_data, renderer_params, from, to);
-  }
+    }
 
       //save colour into texture
-  int k = (j * width + i)*3;
-  image[k+2] = (unsigned char)(color.x * 255);
-  image[k+1] = (unsigned char)(color.y * 255);
-  image[k]   = (unsigned char)(color.z * 255);
-}
+    int k = (j * width + i)*3;
+    image[k+2] = (unsigned char)(color.x * 255);
+    image[k+1] = (unsigned char)(color.y * 255);
+    image[k]   = (unsigned char)(color.z * 255);
+  }
 }
 
 int my_rank;            /* rank of process */
@@ -97,49 +98,62 @@ MPI_Status status;      /* status for receive */
 
 
 void renderFractal(int argc, char** argv, const CameraParams &camera_params, const RenderParams &renderer_params, 
-    unsigned char* image)
+  unsigned char* image)
 {
 
-    MPI_Init(&argc, &argv);
-    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &p);
-
-    printf("rendering fractal...\n");
-
-    double farPoint[3];
-    vec3 to, from;
-
-    from.SetDoublePoint(camera_params.camPos);
-
-    int height = renderer_params.height;
-    int width  = renderer_params.width;
-
-    pixelData pix_data;
 
 
-    int block = height / p;
-    int remainder = height % p;
-    double time = getTime();
 
-    printf("remainder: %d rank: %d\n", remainder, my_rank);
+  printf("rendering fractal...\n");
 
-    int image_size = 3 * (renderer_params.width * renderer_params.height);
 
-    MPI_Bcast(image, image_size, MPI_UNSIGNED_CHAR, 0, 
-               MPI_COMM_WORLD);
 
-    for(int j = 0; j < height; j++)
-    {
+  double farPoint[3];
+  vec3 to, from;
+
+  from.SetDoublePoint(camera_params.camPos);
+
+  int height = renderer_params.height;
+  int width  = renderer_params.width;
+
+  pixelData pix_data;
+
+  MPI_Init(&argc, &argv);
+  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &p);
+
+  //MPI_Request reqs[p*2];
+  //MPI_Status stats[p*2];
+
+  int block = height / p;
+  int remainder = height % p;
+  double time = getTime();
+
+  printf("remainder: %d rank: %d\n", remainder, my_rank);
+
+  int image_size = 3 * (renderer_params.width * renderer_params.height);
+
+  MPI_Bcast(image, image_size, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
+
+  // if (my_rank == 0) {
+  //     // send to all processes the image pointer
+  //   for (int i = 0; i < p; ++i)
+  //   {
+  //       /* code */
+  //   }
+  // }
+
+
+  for(int j = (my_rank)*block; j < (my_rank+1)*block; j++)
+  {
         //printf("%d %d %d\n",  j, my_rank, block);
         //for each column pixel in the row
-        if ( j >= ((my_rank)*block) && j <= ((my_rank+1)*block) ) {
-            createRow(j, width, camera_params, renderer_params, to, from, farPoint, pix_data, image);
-        }
+    createRow(j, width, camera_params, renderer_params, to, from, farPoint, pix_data, image);
 
-        printProgress((j+1)/(double)height,getTime()-time);
-    }
-    printf("\n rendering done:\n");
+    printProgress((j+1)/(double)height,getTime()-time, my_rank);
+  }
+  printf("\n rendering done:\n");
 
-    MPI_Finalize();
+  MPI_Finalize();
 
 }
