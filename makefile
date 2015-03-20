@@ -1,7 +1,8 @@
 LDFLAGS = -lm
 CFLAGS= -O3 -Wall
 CXXFLAGS= -O3 -Wall
-CC=mpicxx
+CXX=mpicxx
+CC=mpic++
 RM=rm
 
 PROGRAM_NAME= mandelbox
