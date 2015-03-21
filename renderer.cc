@@ -121,7 +121,9 @@ void renderFractal(int argc, char** argv, const CameraParams &camera_params, con
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
   MPI_Comm_size(MPI_COMM_WORLD, &p);
-
+  if(my_rank == 0){
+    int block_size = ((height/p)*width + width)*3;
+  }
   //MPI_Request reqs[p*2];
   //MPI_Status stats[p*2];
 
