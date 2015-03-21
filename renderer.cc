@@ -146,6 +146,8 @@ void renderFractal(int argc, char** argv, const CameraParams &camera_params, con
   // }
 
 
+
+
   for(int j = (my_rank)*block; j < (my_rank+1)*block; j++)
   {
         //printf("%d %d %d\n",  j, my_rank, block);
