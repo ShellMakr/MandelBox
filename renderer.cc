@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "camera.h"
 #include "vector3d.h"
 #include "3d.h"
-#include "mpi.h"    
+    
 
 extern double getTime();
 extern void   printProgress( double perc, double time, int rank );
@@ -91,22 +91,14 @@ void createRow(int j, int width, const CameraParams &camera_params, const Render
   }
 }
 
-int my_rank;            /* rank of process */
-int p;                  /* number of processes */
-int tag = 0;            /* tag for messages */
-MPI_Status status;      /* status for receive */  
 
 
-void renderFractal(int argc, char** argv, const CameraParams &camera_params, const RenderParams &renderer_params, 
+
+void renderFractal(int my_rank, int p, const CameraParams &camera_params, const RenderParams &renderer_params, 
   unsigned char* image)
 {
 
-
-
-
   printf("rendering fractal...\n");
-
-
 
   double farPoint[3];
   vec3 to, from;
@@ -117,10 +109,6 @@ void renderFractal(int argc, char** argv, const CameraParams &camera_params, con
   int width  = renderer_params.width;
 
   pixelData pix_data;
-
-  MPI_Init(&argc, &argv);
-  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-  MPI_Comm_size(MPI_COMM_WORLD, &p);
 
   //MPI_Request reqs[p*2];
   //MPI_Status stats[p*2];
@@ -133,27 +121,16 @@ void renderFractal(int argc, char** argv, const CameraParams &camera_params, con
 
   int image_size = 3 * (renderer_params.width * renderer_params.height);
 
+
   MPI_Bcast(image, image_size, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
-
-  // if (my_rank == 0) {
-  //     // send to all processes the image pointer
-  //   for (int i = 0; i < p; ++i)
-  //   {
-  //       /* code */
-  //   }
-  // }
-
 
   for(int j = (my_rank)*block; j < (my_rank+1)*block; j++)
   {
-        //printf("%d %d %d\n",  j, my_rank, block);
-        //for each column pixel in the row
+
     createRow(j, width, camera_params, renderer_params, to, from, farPoint, pix_data, image);
 
-    printProgress((j+1)/(double)height,getTime()-time, my_rank);
+    //printProgress((j+1) / (double)height,getTime()-time, my_rank);
   }
   printf("\n rendering done:\n");
-
-  MPI_Finalize();
 
 }
