@@ -33,11 +33,11 @@ void printProgress( double perc, double time, int rank )
   int t = sec%3600;
   int min = t/60;
   sec = t%60;
-  
+
   OutputString = (char*)"*** completed % 5.2f%s ---  cum. time = %02d:%02d:%02d   % e (s) rank %d";
   sprintf(delete_space, OutputString, perc, "%%", hr, min, sec, time, rank);
 
-  fprintf( stderr, delete_space);
+  fprintf(stderr, delete_space);
   for ( unsigned int i = 0; i < strlen(delete_space); i++)
     fputc( 8, stderr);
 }

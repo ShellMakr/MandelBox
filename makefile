@@ -1,6 +1,6 @@
 LDFLAGS = -lm
-CFLAGS= -O3 -Wall
-CXXFLAGS= -O3 -Wall
+CFLAGS= -O3 -Wno-error=format-security -Wall
+CXXFLAGS= -O3 -Wno-error=format-security -Wall
 CXX=mpicxx
 CC=mpic++
 RM=rm
@@ -17,4 +17,5 @@ run-serial: $(PROGRAM_NAME)
 	./$(PROGRAM_NAME)$(EXEXT) params.dat
 
 clean:
-	$(RM) *.o $(PROGRAM_NAME)$(EXEEXT) *~
+	$(RM) *.o $(PROGRAM_NAME)$(EXEEXT) *~ image.bmp
+ 
