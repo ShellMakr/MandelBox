@@ -16,4 +16,4 @@ run-serial: $(PROGRAM_NAME)
 	./$(PROGRAM_NAME)$(EXEXT) params.dat
 
 clean:
-	$(RM) *.o $(PROGRAM_NAME)$(EXEEXT) 
+	$(RM) *.o $(PROGRAM_NAME)$(EXEEXT) image.bmp
