@@ -34,11 +34,12 @@ extern void rayMarch (const RenderParams &render_params, const vec3 &from, const
 extern vec3 getColour(const pixelData &pixData, const RenderParams &render_params,
   const vec3 &from, const vec3  &direction);
 
-void createRow(int j, int ranker,int width, const CameraParams &camera_params, const RenderParams &renderer_params,vec3 &to, vec3 &from,  double *farPoint, pixelData &pix_data, unsigned char * image) {
+
+
+
+void createRow(int i, int j, int ranker,int width, const CameraParams &camera_params, const RenderParams &renderer_params,vec3 &to, vec3 &from,  double *farPoint, pixelData &pix_data, unsigned char * image) {
 
 //for each column pixel in the row
-  for(int i = 0; i < width; i++)
-  {
     vec3 color;
     if( renderer_params.super_sampling == 1 )
     {
@@ -89,8 +90,6 @@ void createRow(int j, int ranker,int width, const CameraParams &camera_params, c
     image[k+1] = (unsigned char)(color.y * 255);
     image[k]   = (unsigned char)(color.z * 255);
   }
-}
-
 
 
 
@@ -126,15 +125,22 @@ void renderFractal(int my_rank, int p, const CameraParams &camera_params, const 
 
   for(int j = 0; j < block; j++)
   {
-    //printf(" enter: j %d rank: %d", j, my_rank);
     int ranker =  block*my_rank + j;
-    createRow(j, ranker, width, camera_params, renderer_params, to, from, farPoint, pix_data, image_block);
+    //for each column pixel in the row
+    for(int i = 0; i < width; i++)
+    {
+    //printf(" enter: j %d rank: %d", j, my_rank);
+      
+      createRow(i, j, ranker, width, camera_params, renderer_params, to, from, farPoint, pix_data, image_block);
+    }
 
     printProgress((j+1) / (double)height,getTime()-time, my_rank);
   }
 
-    MPI_Gather(image_block, block_size, MPI_UNSIGNED_CHAR, image, block_size, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
-
   printf("\n rendering done:\n");
+  
+  MPI_Gather(image_block, block_size, MPI_UNSIGNED_CHAR, image, block_size, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
+
+
 
 }
