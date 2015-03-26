@@ -135,7 +135,7 @@ void renderFractal(int my_rank, int p, const CameraParams &camera_params, const 
     
     #pragma omp parallel \
     default(none) \
-    shared(ranker, j, farPoint, image, width,to,from,pix_data,renderer_params,camera_params, height, time, my_rank) 
+    shared(ranker, j, farPoint, image, width,to,from,pix_data,renderer_params,camera_params, height, time, my_rank, image_block) 
     {
       for(int i = 0; i < width; i++)
       {
