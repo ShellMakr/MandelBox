@@ -25,7 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "camera.h"
 #include "vector3d.h"
 #include "3d.h" 
-#include "mpi.h"   
+#include "mpi.h"  
+#include "omp.h" 
 
 extern double getTime();
 extern void   printProgress( double perc, double time, int rank );
@@ -40,56 +41,59 @@ extern vec3 getColour(const pixelData &pixData, const RenderParams &render_param
 void createRow(int i, int j, int ranker,int width, const CameraParams &camera_params, const RenderParams &renderer_params,vec3 &to, vec3 &from,  double *farPoint, pixelData &pix_data, unsigned char * image) {
 
 //for each column pixel in the row
-    vec3 color;
-    if( renderer_params.super_sampling == 1 )
-    {
-      vec3 samples[9];
-      int idx = 0;
-      for(int ssj = -1; ssj < 2; ssj++){
-        for(int ssi = -1; ssi< 2; ssi++){
+  vec3 color;
+  if( renderer_params.super_sampling == 1 )
+  {
+    vec3 samples[9];
+    int idx = 0;
 
-          UnProject(i+ssi*0.5, ranker+ssj*0.5, camera_params, farPoint);
+    for(int ssj = -1; ssj < 2; ssj++){
+      for(int ssi = -1; ssi< 2; ssi++){
+
+        #pragma omp critical
+        UnProject(i+ssi*0.5, ranker+ssj*0.5, camera_params, farPoint);
 
           // to = farPoint - camera_params.camPos
-          to = SubtractDoubleDouble(farPoint,camera_params.camPos);
-          to.Normalize();
+        to = SubtractDoubleDouble(farPoint,camera_params.camPos);
+        to.Normalize();
 
           //render the pixel
-          rayMarch(renderer_params, from, to, pix_data);
+        rayMarch(renderer_params, from, to, pix_data);
 
           //get the colour at this pixel
-          samples[idx] = getColour(pix_data, renderer_params, from, to);
-          idx++;
-        }
+        samples[idx] = getColour(pix_data, renderer_params, from, to);
+        idx++;
       }
-      color = (samples[0]*0.05 + samples[1]*0.1 + samples[2]*0.05 + 
-       samples[3]*0.1  + samples[4]*0.4 + samples[5]*0.1  + 
-       samples[6]*0.05 + samples[7]*0.1 + samples[8]*0.05);
-
     }
-    else
-    {
+    color = (samples[0]*0.05 + samples[1]*0.1 + samples[2]*0.05 + 
+     samples[3]*0.1  + samples[4]*0.4 + samples[5]*0.1  + 
+     samples[6]*0.05 + samples[7]*0.1 + samples[8]*0.05);
+
+  }
+  else
+  {
           // get point on the 'far' plane
           // since we render one frame only, we can use the more specialized method
-      UnProject(i, ranker, camera_params, farPoint);
+    #pragma omp critical
+    UnProject(i, ranker, camera_params, farPoint);
 
           // to = farPoint - camera_params.camPos
-      to = SubtractDoubleDouble(farPoint,camera_params.camPos);
-      to.Normalize();
+    to = SubtractDoubleDouble(farPoint,camera_params.camPos);
+    to.Normalize();
 
           //render the pixel
-      rayMarch(renderer_params, from, to, pix_data);
+    rayMarch(renderer_params, from, to, pix_data);
 
           //get the colour at this pixel
-      color = getColour(pix_data, renderer_params, from, to);
-    }
+    color = getColour(pix_data, renderer_params, from, to);
+  }
 
       //save colour into texture
-    int k = (j * width + i)*3;
-    image[k+2] = (unsigned char)(color.x * 255);
-    image[k+1] = (unsigned char)(color.y * 255);
-    image[k]   = (unsigned char)(color.z * 255);
-  }
+  int k = (j * width + i)*3;
+  image[k+2] = (unsigned char)(color.x * 255);
+  image[k+1] = (unsigned char)(color.y * 255);
+  image[k]   = (unsigned char)(color.z * 255);
+}
 
 
 
@@ -123,18 +127,25 @@ void renderFractal(int my_rank, int p, const CameraParams &camera_params, const 
 
   unsigned char *image_block = (unsigned char*) calloc(sizeof(unsigned char), block_size);
 
+
   for(int j = 0; j < block; j++)
   {
     int ranker =  block*my_rank + j;
     //for each column pixel in the row
-    for(int i = 0; i < width; i++)
+    
+    #pragma omp parallel \
+    default(none) \
+    shared(ranker, j, farPoint, image, width,to,from,pix_data,renderer_params,camera_params)
     {
+      for(int i = 0; i < width; i++)
+      {
     //printf(" enter: j %d rank: %d", j, my_rank);
-      
-      createRow(i, j, ranker, width, camera_params, renderer_params, to, from, farPoint, pix_data, image_block);
-    }
 
-    printProgress((j+1) / (double)height,getTime()-time, my_rank);
+        createRow(i, j, ranker, width, camera_params, renderer_params, to, from, farPoint, pix_data, image_block);
+      }
+
+      printProgress((j+1) / (double)height,getTime()-time, my_rank);
+    }
   }
 
   printf("\n rendering done:\n");
