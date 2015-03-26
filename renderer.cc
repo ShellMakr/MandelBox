@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "vector3d.h"
 #include "3d.h" 
 #include "mpi.h"  
-#include "omp.h" 
+#include "omp.h"
 
 extern double getTime();
 extern void   printProgress( double perc, double time, int rank );
@@ -135,7 +135,7 @@ void renderFractal(int my_rank, int p, const CameraParams &camera_params, const 
     
     #pragma omp parallel \
     default(none) \
-    shared(ranker, j, farPoint, image, width,to,from,pix_data,renderer_params,camera_params)
+    shared(ranker, j, farPoint, image, width,to,from,pix_data,renderer_params,camera_params, hieght, time, my_rank) 
     {
       for(int i = 0; i < width; i++)
       {
