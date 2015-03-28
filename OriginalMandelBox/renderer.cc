@@ -25,6 +25,8 @@
 #include "camera.h"
 #include "vector3d.h"
 #include "3d.h"
+#include "omp.h"
+
 
 extern double getTime();
 extern void   printProgress( double perc, double time );
@@ -49,9 +51,16 @@ void renderFractal(const CameraParams &camera_params, const RenderParams &render
   pixelData pix_data;
   
   double time = getTime();
+
+#pragma omp parallel \
+	default(none) \
+	private(time)\
+	shared (image,height, width,camera_params, farPoint, renderer_params, to, from, pix_data)
+
   for(int j = 0; j < height; j++)
     {
       //for each column pixel in the row
+	#pragma omp for schedule (dynamic)
       for(int i = 0; i <width; i++)
 	{
 	  vec3 color;
