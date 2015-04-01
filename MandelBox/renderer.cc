@@ -24,8 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mandelbox.h"
 #include "camera.h"
 #include "vector3d.h"
-#include "3d.h" 
-#include "mpi.h"   
+#include "3d.h"
+#include "mpi.h"
 
 extern double getTime();
 extern void   printProgress( double perc, double time, int rank );
@@ -91,12 +91,14 @@ void createRow(int i, int j, int ranker,int width, const CameraParams &camera_pa
     image[k]   = (unsigned char)(color.z * 255);
   }
 
-
+int my_rank;            /* rank of process */
+int p;                  /* number of processes */
+int tag = 0;            /* tag for messages */
+MPI_Status status;      /* status for receive */
 
 void renderFractal(int my_rank, int p, const CameraParams &camera_params, const RenderParams &renderer_params, 
   unsigned char* image)
 {
-
   printf("rendering fractal...\n");
 
   double farPoint[3];
