@@ -53,14 +53,15 @@ void renderFractal(const CameraParams &camera_params, const RenderParams &render
   double time = getTime();
 
 #pragma omp parallel \
-	default(none) \
+	default(shared) \
 	private(time)\
 	shared (image,height, width,camera_params, farPoint, renderer_params, to, from, pix_data)
-
+{
+	#pragma omp for schedule (dynamic)
   for(int j = 0; j < height; j++)
     {
       //for each column pixel in the row
-	#pragma omp for schedule (dynamic)
+	
       for(int i = 0; i <width; i++)
 	{
 	  vec3 color;
@@ -115,4 +116,5 @@ void renderFractal(const CameraParams &camera_params, const RenderParams &render
       printProgress((j+1)/(double)height,getTime()-time);
     }
   printf("\n rendering done:\n");
+}
 }
