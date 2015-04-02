@@ -19,13 +19,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <stdio.h>
-
+#include <omp.h>
 #include "color.h"
 #include "mandelbox.h"
 #include "camera.h"
 #include "vector3d.h"
 #include "3d.h"
-#include "omp.h"
+
 
 
 extern double getTime();
