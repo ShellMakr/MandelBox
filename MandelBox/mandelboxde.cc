@@ -54,6 +54,33 @@ static void sphereFold(vec3 &v, double r2, double rMin2, double rFixed2)
       v = v*(rFixed2/r2);
 }
 
+double absoluteVal(double in){
+	if (in >= 0){
+		return in;
+	}
+	in *=-1;
+	return in;
+}
+
+double powerOf(double base, int exponent){
+	double retVal = 1;
+	if (exponent == 0){
+		return retVal;
+	}
+	else if (exponent >0){
+		for (int j = 1;j<=exponent;++j){
+			retVal*=base;
+		}
+		return retVal;
+	}
+	else if (exponent <0){
+		for (int j = 1; j<=exponent;++j){
+			retVal/=base;
+		}
+		return retVal;
+	}
+	return 0;
+}
 
 double MandelBoxDE(const vec3 &p0, const MandelBoxParams &params)
 {
@@ -66,10 +93,10 @@ double MandelBoxDE(const vec3 &p0, const MandelBoxParams &params)
   double dfactor = 1; 
   double r2=-1;
   
-  double c1 = fabs(scale - 1.0);
-  double c2 = pow( fabs(scale), 1 - params.num_iter);
+  double c1 = absoluteVal(scale - 1.0);
+  double c2 = pow( absoluteVal(scale), 1 - params.num_iter);
   
-  for (int i=0; i < params.num_iter; i++) 
+  for (int i=0; i < params.num_iter; ++i) 
     {
       // box fold
       boxFold(p);
@@ -86,11 +113,10 @@ double MandelBoxDE(const vec3 &p0, const MandelBoxParams &params)
       else
 	if (r2<rFixed2)  dfactor *= (rFixed2/r2);
       dfactor = dfactor*fabs(scale)+1.0;
-      assert(dfactor>0);
       if ( r2 > escape ) break;		
     }
   r2 = p.Magnitude();
-  assert(r2>=0);
+
   double d = (r2 - c1) / dfactor - c2;
   return d;
 }
