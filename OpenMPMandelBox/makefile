@@ -1,6 +1,7 @@
 LDFLAGS = -lm -fopenmp
 CFLAGS= -O3 -Wall -fopenmp
 CXXFLAGS= -O3 -Wall -fopenmp
+CXX=g++
 CC=g++
 RM=rm
 
@@ -13,4 +14,4 @@ run-serial: $(PROGRAM_NAME)
 	./$(PROGRAM_NAME)$(EXEXT) params.dat
 
 clean:
-	$(RM) *.o $(PROGRAM_NAME)$(EXEEXT) *~
+	$(RM) *.o $(PROGRAM_NAME)$(EXEEXT) image.bmp

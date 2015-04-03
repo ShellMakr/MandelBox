@@ -27,9 +27,9 @@
 
 using namespace std;
 
-double SQR( double x) { return x*x; }
+inline double SQR( double x) { return x*x; }
 
-double component_fold(double x) 
+inline double component_fold(double x) 
 {
   if (x>1.0) x = 2.0-x;
   else 
@@ -37,14 +37,14 @@ double component_fold(double x)
   return x;
 }
 
-static void boxFold(vec3 &v)
+inline static void boxFold(vec3 &v)
 {
   v.x =  component_fold(v.x);
   v.y =  component_fold(v.y);
   v.z =  component_fold(v.z);
 }
 
-static void sphereFold(vec3 &v, double r2, double rMin2, double rFixed2)
+inline static void sphereFold(vec3 &v, double r2, double rMin2, double rFixed2)
 {
   
   if (r2 < rMin2) 
