@@ -1,7 +1,6 @@
 LDFLAGS = -lm -fopenmp
 CFLAGS= -O3 -Wall -fopenmp
 CXXFLAGS= -O3 -Wall -fopenmp
-CXX=g++
 CC=g++
 RM=rm
 
