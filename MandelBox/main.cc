@@ -23,12 +23,11 @@
 #include "camera.h"
 #include "renderer.h"
 #include "mandelbox.h"
-#include "mpi.h"
 
 void getParameters(char *filename, CameraParams *camera_params, RenderParams *renderer_params,
 		   MandelBoxParams *mandelBox_paramsP);
 void init3D       (CameraParams *camera_params, const RenderParams *renderer_params);
-void renderFractal(int my_rank, int p,  const CameraParams &camera_params, const RenderParams &renderer_params, unsigned char* image);
+void renderFractal(const CameraParams &camera_params, const RenderParams &renderer_params, unsigned char* image);
 void saveBMP      (const char* filename, const unsigned char* image, int width, int height);
 
 MandelBoxParams mandelBox_params;
@@ -37,15 +36,6 @@ int main(int argc, char** argv)
 {
   CameraParams    camera_params;
   RenderParams    renderer_params;
-
-  int my_rank;            /* rank of process */
-  int p;                  /* number of processes */
-  int tag = 0;            /* tag for messages */
-  MPI_Status status;      /* status for receive */  
-
-  MPI_Init(&argc, &argv);
-  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-  MPI_Comm_size(MPI_COMM_WORLD, &p);
   
   getParameters(argv[1], &camera_params, &renderer_params, &mandelBox_params);
 
@@ -54,13 +44,10 @@ int main(int argc, char** argv)
 
   init3D(&camera_params, &renderer_params);
 
-  renderFractal(my_rank, p, camera_params, renderer_params, image);
+  renderFractal(camera_params, renderer_params, image);
   
-  if (my_rank == 0)
-    saveBMP(renderer_params.file_name, image, renderer_params.width, renderer_params.height);
+  saveBMP(renderer_params.file_name, image, renderer_params.width, renderer_params.height);
   
-  MPI_Finalize();
-
   free(image);
 
   return 0;
