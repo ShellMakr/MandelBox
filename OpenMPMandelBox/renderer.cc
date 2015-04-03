@@ -52,25 +52,31 @@ void renderFractal(const CameraParams &camera_params, const RenderParams &render
   
   double time = getTime();
 
-#pragma omp parallel \
-	default(none) \
-	private(time)\
-	shared (image,height, width,camera_params, farPoint, renderer_params, to, from, pix_data)
 
-  for(int j = 0; j < height; j++)
+
+#pragma omp parallel\
+    default(shared)\
+    private(time, to, pix_data)\
+    shared(image, height,width,camera_params, renderer_params, from, farPoint)
+
+	#pragma omp for schedule (guided)	
+  for(long int j = 0; j < (height*width); j++)
     {
+
       //for each column pixel in the row
-	#pragma omp for schedule (dynamic)
-      for(int i = 0; i <width; i++)
-	{
-	  vec3 color;
+	long int jay = (j/(width));
+	long int eye = j%width;
+
+//if (jay != ((j-1)/width)) printf("jay: %ld eye: %ld \n",jay,eye); 
+
+	vec3 color;
 	  if( renderer_params.super_sampling == 1 )
 	    {
 	      vec3 samples[9];
 	      int idx = 0;
 	      for(int ssj = -1; ssj < 2; ssj++){
-		for(int ssi = -1; ssi< 2; ssi++){
-		  UnProject(i+ssi*0.5, j+ssj*0.5, camera_params, farPoint);
+		  for(int ssi = -1; ssi< 2; ssi++){
+		  UnProject(eye+ssi*0.5, jay+ssj*0.5, camera_params, farPoint);
 		  
 		  // to = farPoint - camera_params.camPos
 		  to = SubtractDoubleDouble(farPoint,camera_params.camPos);
@@ -93,7 +99,7 @@ void renderFractal(const CameraParams &camera_params, const RenderParams &render
 	    {
 	      // get point on the 'far' plane
 	      // since we render one frame only, we can use the more specialized method
-	      UnProject(i, j, camera_params, farPoint);
+	      UnProject(eye, jay, camera_params, farPoint);
 	      
 	      // to = farPoint - camera_params.camPos
 	      to = SubtractDoubleDouble(farPoint,camera_params.camPos);
@@ -107,12 +113,14 @@ void renderFractal(const CameraParams &camera_params, const RenderParams &render
 	    }
 	  
 	  //save colour into texture
-	  int k = (j * width + i)*3;
+	  int k = (jay * width + eye)*3;
 	  image[k+2] = (unsigned char)(color.x * 255);
 	  image[k+1] = (unsigned char)(color.y * 255);
 	  image[k]   = (unsigned char)(color.z * 255);
-	}
-      printProgress((j+1)/(double)height,getTime()-time);
+	
+    if (jay == (jay-1))  
+    printProgress((jay+1)/(double)height,getTime()-time);
     }
+
   printf("\n rendering done:\n");
 }
