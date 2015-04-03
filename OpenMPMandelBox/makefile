@@ -1,14 +1,10 @@
-LDFLAGS = -lm -fopenmp 
-CFLAGS= -O3 -Wall -fopenmp -lm
+LDFLAGS = -lm -fopenmp
+CFLAGS= -O3 -Wall -fopenmp
 CXXFLAGS= -O3 -Wall -fopenmp
-CC=g++-4.9
-CXX=g++-4.9
+CC=g++
 RM=rm
 
 PROGRAM_NAME= mandelbox
-
-.o.cc:
-	$(CXX) -c $^
 
 $(PROGRAM_NAME): main.o print.o timing.o savebmp.o getparams.o 3d.o getcolor.o distance_est.o mandelboxde.o raymarching.o renderer.o init3D.o
 	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
