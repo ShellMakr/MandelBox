@@ -65,7 +65,7 @@ void Perspective(double fov, double aspect, double zNear, double zFar, double *p
   Frustum(-xmax, xmax, -ymax, ymax, zNear, zFar, projMat);
 }
 
-void Frustum(double left, double right, double bottom, double top, double znear, double zfar, double *matrix)
+inline void Frustum(double left, double right, double bottom, double top, double znear, double zfar, double *matrix)
 {
   double temp, temp2, temp3, temp4;
   temp = 2.0 * znear;
@@ -132,7 +132,7 @@ void LookAt(double *eye, double *target, double *upV, double *modelMatrix)
 }
 
 
-void NormalizeVector(double *v)
+inline void NormalizeVector(double *v)
 {
   double m = 1.0/sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);
   v[0] *= m;
@@ -140,7 +140,7 @@ void NormalizeVector(double *v)
   v[2] *= m;
 }
 
-void ComputeNormalOfPlane(double *normal, double *v1, double *v2)
+inline void ComputeNormalOfPlane(double *normal, double *v1, double *v2)
 {
   normal[0] = v1[1] * v2[2] - v1[2] * v2[1];
   normal[1] = v1[2] * v2[0] - v1[0] * v2[2];
@@ -376,7 +376,7 @@ int InvertMatrix(double *m, double *out){
   return 1;
 }
 
-void Translate(double *result, double x, double y, double z){
+inline void Translate(double *result, double x, double y, double z){
   double matrix[16], resultMatrix[16];
 
   LoadIdentity(matrix);
