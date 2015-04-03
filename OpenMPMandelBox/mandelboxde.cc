@@ -27,9 +27,9 @@
 
 using namespace std;
 
-inline double SQR( double x) { return x*x; }
+double SQR( double x) { return x*x; }
 
-inline double component_fold(double x) 
+double component_fold(double x) 
 {
   if (x>1.0) x = 2.0-x;
   else 
