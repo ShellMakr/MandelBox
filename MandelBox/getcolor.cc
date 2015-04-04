@@ -17,7 +17,6 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 */
 #include "color.h"
 #include "renderer.h"
@@ -36,7 +35,7 @@ static const vec3 baseColor(1.0, 1.0, 1.0);
 static const vec3 backColor(0.4,0.4,0.4);
 //-----------------------------------
 
-void lighting(const vec3 &n, const vec3 &color, const vec3 &pos, const vec3 &direction,  vec3 &outV)
+inline void lighting(const vec3 &n, const vec3 &color, const vec3 &pos, const vec3 &direction,  vec3 &outV)
 {
   vec3 nn = n -1.0;
   double ambient = max( CamLightMin, nn.Dot(direction) )*CamLightW;
