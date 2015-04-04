@@ -13,4 +13,4 @@ run-serial: $(PROGRAM_NAME)
 	./$(PROGRAM_NAME)$(EXEXT) params.dat
 
 clean:
-	$(RM) *.o $(PROGRAM_NAME)$(EXEEXT) *~ image.bmp *.gcno *.gcda gmon.out *.gcov params*.dat
+	$(RM) *.o $(PROGRAM_NAME)$(EXEEXT) *~ image.bmp *.gcno *.gcda gmon.out *.gcov params*.dat image*.bmp
