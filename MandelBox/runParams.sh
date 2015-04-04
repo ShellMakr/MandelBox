@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
-for i in $(seq $1 $2)
+for (( i=0; i<=$1; i++ ))
 do
-mpirun -np 32 ./mandelbox params$i.dat
-mv imageX.bmp image-$i.bmp
+echo $i
+./mandelbox params$i.dat
 done
