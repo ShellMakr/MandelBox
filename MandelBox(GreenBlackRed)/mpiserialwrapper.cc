@@ -51,10 +51,11 @@ int main(int argc, char* argv[]) {
 
 	// pass in range of images that mpi is too compute
 	start = atoi(argv[1]);
+	end = atoi(argv[2]);
 	int block = end / p;
 
 
-	for (int i = 0; i < end; i++)
+	for (int i = start; i < end; i++)
 	{
 		sprintf(newparams,"params/params%d.dat",i);
 		sprintf(command, "./mandelbox %s", newparams);
