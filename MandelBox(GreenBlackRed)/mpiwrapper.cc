@@ -35,6 +35,7 @@ int main(int argc, char* argv[]) {
 	start = atoi(argv[1]);
 	end = atoi(argv[2]);
 	int block = (end - start)/ p;
+	remainder = (end - start) % p;
 
 
 	for (int i = start + (block*my_rank); i < (my_rank+1)*block; i++)
@@ -45,6 +46,17 @@ int main(int argc, char* argv[]) {
 		//printf("%s\n", command);
 		//call the command to make the mandelbrot image
 		system(command);
+	}
+
+	if (my_rank == 1) {
+
+		for (int i = block * p; i < remainder; i++)
+		{
+			sprintf(newparams,"params/params%d.dat",i);
+			sprintf(command, "./mandelbox %s", newparams);
+			//call the command to make the mandelbrot image
+			system(command);
+		}
 	}
 
 
