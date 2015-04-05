@@ -35,15 +35,8 @@ char * filename = "params.dat";
 char * newparams = (char*) calloc(40, sizeof(char));
 int fractal_dec = 0.01137;
 
-
-
-
 int main(int argc, char* argv[]) {
 
-	int my_rank; 			/* rank of process */
-	int p; 					/* number of processes */
-	int tag = 0; 			/* tag for messages */
-	MPI_Status status; 		/* status for receive */
 	char * command = (char*) calloc(40, sizeof(char));
 	int start;
 	int end;
@@ -52,7 +45,6 @@ int main(int argc, char* argv[]) {
 	// pass in range of images that mpi is too compute
 	start = atoi(argv[1]);
 	end = atoi(argv[2]);
-	int block = end / p;
 
 
 	for (int i = start; i < end; i++)
