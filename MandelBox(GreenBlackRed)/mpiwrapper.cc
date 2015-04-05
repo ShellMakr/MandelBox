@@ -22,7 +22,8 @@ int main(int argc, char* argv[]) {
 	int tag = 0; 			/* tag for messages */
 	MPI_Status status; 		/* status for receive */
 	char * command = (char*) calloc(40, sizeof(char));
-	int range;
+	int start;
+	int end;
 
 
 
@@ -31,11 +32,12 @@ int main(int argc, char* argv[]) {
 	MPI_Comm_size(MPI_COMM_WORLD, &p);
 
 
-	range = atoi(argv[1]);
-	int block = range / p;
+	start = atoi(argv[1]);
+	end = atoi(argv[2]);
+	int block = (start - end)/ p;
 
 
-	for (int i = block*my_rank; i < (my_rank+1)*block; i++)
+	for (int i = start + block*my_rank; i < (my_rank+1)*block; i++)
 	{
 
 		sprintf(newparams,"params/params%d.dat",i);

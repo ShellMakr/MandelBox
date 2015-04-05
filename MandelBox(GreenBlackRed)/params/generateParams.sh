@@ -15,7 +15,7 @@ do
 	else
 		awk -v i="$j" '{ gsub(/6 6 12/, 6*0.998^i" " 6*0.998^i" "6*0.998^i)};{print}' $paramFile > $paramFile.new
 		mv $paramFile.new $paramFile
-		awk '{ gsub(/2.4 7 1.3/, "2.4 " 0.0005 " 1.3")};{print}' $paramFile > $paramFile.new
+		awk '{ gsub(/2.4 5.38 1.3/, "2.4 " 0.0005 " 1.3")};{print}' $paramFile > $paramFile.new
 		mv $paramFile.new $paramFile
 	fi
 done
