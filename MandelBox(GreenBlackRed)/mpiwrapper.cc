@@ -34,10 +34,10 @@ int main(int argc, char* argv[]) {
 
 	start = atoi(argv[1]);
 	end = atoi(argv[2]);
-	int block = (start - end)/ p;
+	int block = (end - start)/ p;
 
 
-	for (int i = start + block*my_rank; i < (my_rank+1)*block; i++)
+	for (int i = start + (block*my_rank); i < (my_rank+1)*block; i++)
 	{
 
 		sprintf(newparams,"params/params%d.dat",i);
