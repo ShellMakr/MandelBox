@@ -1,3 +1,26 @@
+/**
+ *	Iheatu Wogu 	: 0850010
+ * 	Warren 			: 1131525
+ *  Graeme 			:
+ *  Maciej 			:	 
+ */
+
+
+/**
+ *	mpiwrapper.cc
+ *	object filename 	: mpirunner
+ *
+ *	mpiwarapper takes the object file mandelbox
+ *	and passs different parameter files. A group of
+ *	passes to mandelbox are handled by every processor
+ *	passed in by mpi.
+ *
+ *  The wrapper allows ranges in order to facilitate
+ *  tests. These test are 
+ * 
+ */
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,7 +54,7 @@ int main(int argc, char* argv[]) {
 	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &p);
 
-
+	// pass in range of images that mpi is too compute
 	start = atoi(argv[1]);
 	end = atoi(argv[2]);
 	int block = (end - start)/ p;
