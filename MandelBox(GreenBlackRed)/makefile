@@ -18,7 +18,7 @@ run-parallel:
 	./generateParams.sh 7199
 	cd ..
 	mpiCC mpiwrapper.cc -o mpirunner 
-	mpirun -np 4 ./mpirunner
+	time mpirun -np 4 ./mpirunner
 
 clean:
 	$(RM) *.o $(PROGRAM_NAME)$(EXEEXT) *~ image.bmp *.gcno *.gcda gmon.out *.gcov params*.dat image*.bmp
