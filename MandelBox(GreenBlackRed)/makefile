@@ -1,7 +1,8 @@
 LDFLAGS = -lm -fopenmp
 CFLAGS= -O3 -Wall -fopenmp
 CXXFLAGS= -O3 -Wall -fopenmp
-CC=g++
+CXX=g++-4.9
+CC=g++-4.9
 RM=rm
 
 PROGRAM_NAME= mandelbox
