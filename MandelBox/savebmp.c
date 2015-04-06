@@ -53,7 +53,7 @@ void saveBMP(const char* filename, const unsigned char* result, int w, int h){
 
 	
 	img = (unsigned char *)malloc(3*w);
-	assert(img);
+	//assert(img);
 
 	int i,j;
 	for(j=0; j<h; j++)
@@ -68,5 +68,5 @@ void saveBMP(const char* filename, const unsigned char* result, int w, int h){
 	    fwrite(bmppad,1,(4-(w*3)%4)%4,f);
 	}
 	fclose(f);
-    printf("finished saving!\n");
+    //printf("finished saving!\n");
 }

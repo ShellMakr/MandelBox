@@ -90,7 +90,7 @@ double MandelBoxDE(const vec3 &p0, const MandelBoxParams &params)
       if ( r2 > escape ) break;		
     }
   r2 = p.Magnitude();
-  assert(r2>=0);
+  //assert(r2>=0);
   double d = (r2 - c1) / dfactor - c2;
   return d;
 }

@@ -1,0 +1,31 @@
+# CAMERA
+# location  x,y,z   (7,7,7)
+6 6 11.5317
+# look_at (target)  x,y,z
+0 0 0 
+# up vector x,y,z;  (0, 1, 0)
+0 1 0
+# field of view     (1)
+1.5
+# IMAGE
+# width height
+3840 2160
+# detail level, the smaller the more detailed (-3)
+-3.3
+# MANDELBOX
+# scale, rMin, rFixed  (2 0.5 1)	#modifies the shape of the box
+2.4 3.30098 1.3		
+#third arg. modifies size of the cluster (higher numbers fragment)
+
+# max number of iterations, escape time
+18 25
+# COLORING
+# type 0 or 1
+1
+# brightness
+1.2
+# super sampling anti aliasing 0 = off, 1 = on
+0
+# IMAGE FILE NAME
+image48.bmp
+

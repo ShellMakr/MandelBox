@@ -31,7 +31,7 @@ static char buf[BUF_SIZE];
 
 void getParameters(char *filename, CameraParams *camP, RenderParams *renP, MandelBoxParams *boxP)
 {
-  printf("getting parameters...\n");
+  //printf("getting parameters...\n");
   FILE *fp;
   int ret;
   double *d;
@@ -66,7 +66,7 @@ void getParameters(char *filename, CameraParams *camP, RenderParams *renP, Mande
 	  //camera position
 	case 0:
 	  d = camP->camPos;
-	  sscanf(buf, "%e %e %e", d, d+1, d+2);
+	  sscanf(buf, "%lf %lf %lf", d, d+1, d+2);
 	  break;
 	case 1:
 	  //camera target

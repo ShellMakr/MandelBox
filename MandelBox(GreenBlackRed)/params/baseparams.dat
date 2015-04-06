@@ -9,7 +9,11 @@
 1.5
 # IMAGE
 # width height
+<<<<<<< HEAD
 400 300
+=======
+3840 2160
+>>>>>>> adbc6d2c9404d90f623f5fb710df1e8eb0a58ee9
 # detail level, the smaller the more detailed (-3)
 -3.3
 # MANDELBOX

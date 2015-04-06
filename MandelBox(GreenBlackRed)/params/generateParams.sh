@@ -41,7 +41,9 @@ do
 	##awk '{ gsub(/2.4 3.58 1.3/, "2.4 " 0.0005 " 1.3")};{print}' $paramFile > $paramFile.new
 	##mv $paramFile.new $paramFile
 
-	
+	##On second 38.5 moves camera angle in +z direction for 11 seconds
+	if [ $i -le 330 ] ;
+	then
 	awk -v i="$i" '{ gsub(/0 0 0/, "0 -5.25 " 0-0.025*i)};{print}' $paramFile > $paramFile.new
 	mv $paramFile.new $paramFile
 	awk -v i="$i" '{ gsub(/6 6 12/, "2.200740703 0.407399065 2.200740703")};{print}' $paramFile > $paramFile.new
@@ -50,7 +52,14 @@ do
 	mv $paramFile.new $paramFile
 
 
-
+	else
+	awk -v i="$i" '{ gsub(/0 0 0/, "0 -5.25 -8.25")};{print}' $paramFile > $paramFile.new
+	mv $paramFile.new $paramFile
+	awk -v i="$i" '{ gsub(/6 6 12/, "2.200740703 0.407399065 " 2.200740703*0.942^(i-330))};{print}' $paramFile > $paramFile.new
+	mv $paramFile.new $paramFile
+	awk '{ gsub(/2.4 3.58 1.3/, "2.4 " 0.0005 " 1.3")};{print}' $paramFile > $paramFile.new
+	mv $paramFile.new $paramFile
+	fi
 
 
 

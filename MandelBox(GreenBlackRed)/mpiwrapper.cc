@@ -58,24 +58,41 @@ int main(int argc, char* argv[]) {
 	start = atoi(argv[1]);
 	end = atoi(argv[2]);
 	int block = (end - start)/ p;
+<<<<<<< HEAD
 	int remainder = (end - start) % p;
 	
+=======
+>>>>>>> adbc6d2c9404d90f623f5fb710df1e8eb0a58ee9
 
 	
 
+<<<<<<< HEAD
 	for (int i = start + (block*my_rank); i < ((my_rank+1)*block +start); i++)
+=======
+	// this computes the mandelbrot images for a range
+	// defined for each process
+	for (int i = start + (block*my_rank); i < start + ((my_rank+1)*block); i++)
+>>>>>>> adbc6d2c9404d90f623f5fb710df1e8eb0a58ee9
 	{
 		
 		sprintf(newparams,"params/params%d.dat",i);
 		sprintf(command, "./mandelbox %s", newparams);
-		//printf("%s\n", command);
 		//call the command to make the mandelbrot image
 		system(command);
 	}
 
+<<<<<<< HEAD
 	if (my_rank == 0) {
 
 		for (int i = block * p; i < end; i++)
+=======
+	// this gives remainder images to the first process to computes
+	if (my_rank == 0) {
+
+		int initial = start + (block * p);
+		printf("%s and remainder: start: %d\n", "got here", initial);
+		for (int i = initial; i < end; i++)
+>>>>>>> adbc6d2c9404d90f623f5fb710df1e8eb0a58ee9
 		{
 			sprintf(newparams,"params/params%d.dat",i);
 			sprintf(command, "./mandelbox %s", newparams);
