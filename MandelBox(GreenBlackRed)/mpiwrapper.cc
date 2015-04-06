@@ -58,12 +58,14 @@ int main(int argc, char* argv[]) {
 	start = atoi(argv[1]);
 	end = atoi(argv[2]);
 	int block = (end - start)/ p;
-	remainder = (end - start) % p;
+	int remainder = (end - start) % p;
+	
 
+	
 
-	for (int i = start + (block*my_rank); i < (my_rank+1)*block; i++)
+	for (int i = start + (block*my_rank); i < ((my_rank+1)*block +start); i++)
 	{
-
+		
 		sprintf(newparams,"params/params%d.dat",i);
 		sprintf(command, "./mandelbox %s", newparams);
 		//printf("%s\n", command);
@@ -71,9 +73,9 @@ int main(int argc, char* argv[]) {
 		system(command);
 	}
 
-	if (my_rank == 1) {
+	if (my_rank == 0) {
 
-		for (int i = block * p; i < remainder; i++)
+		for (int i = block * p; i < end; i++)
 		{
 			sprintf(newparams,"params/params%d.dat",i);
 			sprintf(command, "./mandelbox %s", newparams);
