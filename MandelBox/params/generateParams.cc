@@ -11,11 +11,12 @@
 
 static char buf[BUF_SIZE];
 
+int FPSForProject = 30;
 
 void getParameters(char *filename, CameraParams *camera_params, RenderParams *renderer_params,
 	MandelBoxParams *mandelBox_params );
 
-void createParams(const char filename, CameraParams *camera_params, , RenderParams *renderer_params, MandelBoxParams *) {
+void createParams(const char filename, CameraParams *camera_params,RenderParams *renderer_params, MandelBoxParams *) {
 	
 	//file to write too
 	FILE *fp;
@@ -34,11 +35,23 @@ void createParams(const char filename, CameraParams *camera_params, , RenderPara
 
 	// }
 
-
 }
 
 
 MandelBoxParams mandelBox_params;
+
+float* changeSmooth(int timeInSeconds, float beginValue, float endValue){//Smoothly changes a variable
+	int numIter = FPSForProject*timeInSeconds;
+	float stepSize = (endRange - beginRange)/numIter;
+
+
+	int i;
+	float varValues[numIter];
+	for (i=0; i<numIter; i++){
+		varValues[i] = stepSize*i + beginRange;
+	}
+	return varValues;
+}
 
 int main(int argc, char* argv[]) {
 
@@ -54,6 +67,7 @@ int main(int argc, char* argv[]) {
 	int num_of_files = atoi(argv[1]);
 
 	for (int i = 0; i < num_of_files; i++) {
+
 		CameraParams    cam_p = camera_params;
 		RenderParams    ren_p = renderer_params;
 		MandelBoxParams man_p;
@@ -61,8 +75,6 @@ int main(int argc, char* argv[]) {
 		sprintf(image_name,"image%d.bmp",i);
 		strcpy(ren_p.file_name, image_name);
 		printf("%s\n",ren_p.file_name);
-
-
 
 	}
 
