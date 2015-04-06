@@ -15,6 +15,8 @@ int FPSForProject = 30;
 
 void getParameters(char *filename, CameraParams *camera_params, RenderParams *renderer_params, MandelBoxParams *mandelBox_params );
 
+
+// creates the parameter files to be read
 void createParams(CameraParams *camP, RenderParams *renP, MandelBoxParams *boxP) {
 	
 	//file to write too
@@ -80,20 +82,42 @@ void createParams(CameraParams *camP, RenderParams *renP, MandelBoxParams *boxP)
 
 }
 
+void changeSmoothLocation(bool changes[], float beginValues[], float stepSizes[], int index, CameraParams* camP, RenderParams* renP){
+//Smoothly changes a variable
+	float varVal;
 
+	if (changes[0]){
+		varVal = stepSizes[0] * index + beginValues[0];
+		camP->camPos[0]=varVal;
+	}
+	if (changes[1]){
+		varVal = stepSizes[1] * index + beginValues[1];
+		camP->camPos[1]=varVal;
+	}
+	if (changes[2]){
+		varVal = stepSizes[2] * index + beginValues[2];
+		camP->camPos[2]=varVal;
+	}
+}
 
+void changeSmoothLook(bool changes[], float beginValues[], float stepSizes[], int index, CameraParams* camP, RenderParams* renP){
+//Smoothly changes a variable
+	float varVal;
 
-// float* changeSmootzh(int timeInSeconds, float beginValue, float endValue){//Smoothly changes a variable
-// 	int numIter = FPSForProject*timeInSeconds;
-// 	float stepSize = (endRange - beginRange)/numIter;
+	if (changes[0]){
+		varVal = stepSizes[0] * index + beginValues[0];
+		camP->camTarget[0]=varVal;
+	}
+	if (changes[1]){
+		varVal = stepSizes[1] * index + beginValues[1];
+		camP->camTarget[1]=varVal;
+	}
+	if (changes[2]){
+		varVal = stepSizes[2] * index + beginValues[2];
+		camP->camTarget[2]=varVal;
+	}
+}
 
-// 	int i;
-// 	float varValues[numIter];
-// 	for (i=0; i<numIter; i++){
-// 		varValues[i] = stepSize*i + beginRange;
-// 	}
-// 	return varValues;
-// }
 
 int main(int argc, char* argv[]) {
 
@@ -107,9 +131,10 @@ int main(int argc, char* argv[]) {
 	// gets information from the base param file
 	getParameters("baseParams.dat", &camera_params, &renderer_params, &mandelBox_params);
 
-	int num_of_files = atoi(argv[1]);
+	int start_files = atoi(argv[1]);
+	int end_files = atoi(argv[2]);
 
-	for (int i = 0; i < num_of_files; i++) {
+	for (int i = start_files; i < end_files; i++) {
 
 		CameraParams    cam_p = camera_params;
 		RenderParams    ren_p = renderer_params;
@@ -120,11 +145,10 @@ int main(int argc, char* argv[]) {
 		printf("%s\n",ren_p.file_name);
 
 
+
 		//create parameter files
 		createParams(&cam_p,  &ren_p, &man_p); 
 
 	}
-
-
 
 }
