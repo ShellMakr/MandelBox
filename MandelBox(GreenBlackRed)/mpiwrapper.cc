@@ -1,4 +1,4 @@
-/**
+/*
  *	Iheatu Wogu 	: 0850010
  * 	Warren 			: 1131525
  *  Graeme 			:
@@ -6,7 +6,7 @@
  */
 
 
-/**
+/*
  *	mpiwrapper.cc
  *	object filename 	: mpirunner
  *
