@@ -52,6 +52,8 @@ void renderFractal(const CameraParams &camera_params, const RenderParams &render
   
   double time = getTime();
 
+  long int image_size = (height*width);
+
 
 
 #pragma omp parallel\
@@ -60,7 +62,7 @@ void renderFractal(const CameraParams &camera_params, const RenderParams &render
     shared(image, height,width,camera_params, renderer_params, from, farPoint)
 
 	#pragma omp for schedule (guided)	
-  for(long int j = 0; j < (height*width); j++)
+  for(long int j = 0; j < image_size; j++)
     {
 
       //for each column pixel in the row
