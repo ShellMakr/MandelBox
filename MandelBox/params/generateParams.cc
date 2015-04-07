@@ -132,6 +132,11 @@ int main(int argc, char* argv[]) {
 
 		} else if ( i >= 1275 && i < 1875 ) {
 			cam_p.camPos[1] -= 0.006;
+
+		} else if (i>= 1875 && i < 2205 ) {
+
+			cam_p.camTarget[2] += 0.025;
+			cam_p.camPos[2] -= 0.006;
 		}
 
 
