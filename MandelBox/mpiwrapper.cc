@@ -67,6 +67,7 @@ int main(int argc, char* argv[]) {
 
 		sprintf(newparams,"params/params%d.dat",i);
 		sprintf(command, "./mandelbox %s", newparams);
+		printf("made image%d\n",i);
 		//call the command to make the mandelbrot image
 		system(command);
 	}
@@ -79,6 +80,7 @@ int main(int argc, char* argv[]) {
 		{
 			sprintf(newparams,"params/params%d.dat",i);
 			sprintf(command, "./mandelbox %s", newparams);
+			printf("made image%d\n",i);
 			//call the command to make the mandelbrot image
 			system(command);
 		}
