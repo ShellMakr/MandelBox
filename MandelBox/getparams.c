@@ -58,7 +58,7 @@ void getParameters(char *filename, CameraParams *camP, RenderParams *renP, Mande
       if (ret == EOF) break;
       
       if(buf[0] == '#') // comment line
-	continue;
+			continue;
       
       switch(count)
 	{

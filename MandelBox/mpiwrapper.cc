@@ -75,7 +75,6 @@ int main(int argc, char* argv[]) {
 	if (my_rank == 0) {
 
 		int initial = start + (block * p);
-		printf("%s and remainder: start: %d\n", "got here", initial);
 		for (int i = initial; i < end; i++)
 		{
 			sprintf(newparams,"params/params%d.dat",i);

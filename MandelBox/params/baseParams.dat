@@ -8,8 +8,8 @@
 # field of view     (1)
 1.5
 # IMAGE
-# width height
-3840 2160
+# width height 3840 2160
+400 300
 # detail level, the smaller the more detailed (-3)
 -3.3
 # MANDELBOX
