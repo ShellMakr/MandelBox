@@ -1,3 +1,24 @@
+/*
+ *	Iheatu Wogu 	: 0850010
+ * 	Warren 			: 1131525
+ *  Graeme 			: 1153121
+ *  Maciej 			: 0947341
+ */
+
+
+/*
+ *	generateParams.cc
+ *	object filename 	: paramGenerator
+ *
+ *	This file creates the parameter files
+ *  that mandelbox uses the generate image files
+ *  
+ * 
+ */
+
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,23 +28,19 @@
 #include "renderer.h"
 #include "mandelbox.h"
 
-#define BUF_SIZE 1024
-
-static char buf[BUF_SIZE];
-
-int FPSForProject = 30;
 
 void getParameters(char *filename, CameraParams *camera_params, RenderParams *renderer_params, MandelBoxParams *mandelBox_params );
 
 
 
-// creates the parameter files to be read
+// Uses the baseParams.dat collect information that is used
+// to generate the rest of the parameter files.
+
 void createParams( char * param_name, CameraParams *camP, RenderParams *renP, MandelBoxParams *boxP) {
 	
 	//file to write too
 	FILE *fp;
 	double *d;
-
 
 	fp = fopen(param_name, "w");
 
@@ -51,7 +68,6 @@ void createParams( char * param_name, CameraParams *camP, RenderParams *renP, Ma
 	  //field of view
 	fprintf( fp, "%lf\n", camP->fov);
 
-
 	  //IMAGE
 	  //width, height
 	fprintf( fp, "%d %d\n", renP->width, renP->height);
@@ -62,16 +78,12 @@ void createParams( char * param_name, CameraParams *camP, RenderParams *renP, Ma
 
 	  //FRACTAL
 	fprintf( fp, "%f %f %f\n", boxP->scale, boxP->rMin, boxP->rFixed);
-
-
 	fprintf( fp, "%d %f \n", boxP->num_iter, boxP->escape_time);
 
 
 	  //COLORING 
 	fprintf( fp, "%d\n", renP->colourType);
-
 	fprintf( fp, "%f \n", renP->brightness);
-
 	fprintf( fp, "%d \n", renP->super_sampling);
 
 
@@ -101,7 +113,9 @@ int main(int argc, char* argv[]) {
 
 
 
-
+/**
+ * This loop alters the parameters of the MadnelBox cube to enalbe us to navigate through
+ */
 	for (int i = 0; i < end_files; i++) {
 
 		sprintf(param_name, "params%d.dat", i);
@@ -166,6 +180,7 @@ int main(int argc, char* argv[]) {
 
 			cam_p.camTarget[2]+=0.097;
 			cam_p.camPos[0]-=0.002;
+
 			cam_p.camPos[2]+=0.007;
 
 		} else if ( i >= 6060 && i < 7560 ) {
@@ -174,8 +189,6 @@ int main(int argc, char* argv[]) {
 			cam_p.camPos[1] -= 0.001777777;
 			man_p.rMin += -0.0015;
 		}
-
-
 
 		//create parameter files
 		createParams(param_name, &cam_p,  &ren_p, &man_p); 

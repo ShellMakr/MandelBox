@@ -57,7 +57,7 @@ vec3 getColour(const pixelData &pixData, const RenderParams &render_params,
       if(render_params.colourType == 0 || render_params.colourType == 1)
 	{
 	  hitColor = hitColor * pixData.normal;
-	  hitColor = (hitColor -1.4)/2.0;  //first value modifies the saturation (higher for a lighter hue)
+	  hitColor = (hitColor -1.4) * 0.5;  //first value modifies the saturation (higher for a lighter hue)
 	  hitColor = hitColor*render_params.brightness;
 	  
 	  //gamma correction

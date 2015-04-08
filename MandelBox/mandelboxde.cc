@@ -44,14 +44,14 @@ inline static void boxFold(vec3 &v)
   v.z =  component_fold(v.z);
 }
 
-inline static void sphereFold(vec3 &v, double r2, double rMin2, double rFixed2)
+inline static void sphereFold(vec3& v, double& r2, double& rMin2, double& rFixed2)
 {
   
   if (r2 < rMin2) 
-    v = v*(rFixed2/rMin2);
+    v = v*(rFixed2/ rMin2);
   else
     if (r2 < rFixed2)
-      v = v*(rFixed2/r2);
+      v = v*(rFixed2/ r2);
 }
 
 
@@ -86,13 +86,13 @@ double MandelBoxDE(const vec3 &p0, const MandelBoxParams &params)
       else
 	if (r2<rFixed2)  dfactor *= (rFixed2/r2);
       dfactor = dfactor*fabs(scale)+1.0;
-      assert(dfactor>0);
+      //assert(dfactor>0);
       if ( r2 > escape ) break;		
     }
   r2 = p.Magnitude();
   //assert(r2>=0);
-  double d = (r2 - c1) / dfactor - c2;
-  return d;
+  
+  return (double*)((r2 - c1) / dfactor - c2);
 }
 
 

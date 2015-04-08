@@ -18,6 +18,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+ /**
+  *
+  * OpenMP was used to paralellize this part of the MandelBox Cube
+  * generation.
+  * 
+  */
+
 #include <stdio.h>
 
 #include "color.h"
@@ -28,101 +36,101 @@
 #include "omp.h"
 
 
-extern double getTime();
-extern void   printProgress( double perc, double time );
+  extern double getTime();
+  extern void   printProgress( double perc, double time );
 
-extern void rayMarch (const RenderParams &render_params, const vec3 &from, const vec3  &to, pixelData &pix_data);
-extern vec3 getColour(const pixelData &pixData, const RenderParams &render_params,
-		      const vec3 &from, const vec3  &direction);
-
-void renderFractal(const CameraParams &camera_params, const RenderParams &renderer_params, 
-		   unsigned char* image)
-{
-  printf("rendering fractal...\n");
-  
-  double farPoint[3];
-  vec3 to, from;
-  
-  from.SetDoublePoint(camera_params.camPos);
-  
-  int height = renderer_params.height;
-  int width  = renderer_params.width;
-  
-  pixelData pix_data;
-  
-  double time = getTime();
-
-  long int image_size = (height*width);
+  extern void rayMarch (const RenderParams &render_params, const vec3 &from, const vec3  &to, pixelData &pix_data);
+  extern vec3 getColour(const pixelData &pixData, const RenderParams &render_params,
+  	const vec3 &from, const vec3  &direction);
 
 
+  void renderFractal(const CameraParams &camera_params, const RenderParams &renderer_params, 
+  	unsigned char* image)
+  {
+  	printf("rendering fractal...\n");
+
+  	double farPoint[3];
+  	vec3 to, from;
+
+  	from.SetDoublePoint(camera_params.camPos);
+
+  	int height = renderer_params.height;
+  	int width  = renderer_params.width;
+
+  	pixelData pix_data;
+  	double time = getTime();
+  	long int image_size = (height*width);
+
+/**
+ * The loop is unrolled is so as to optimize the caching
+ * during computation
+ */
 
 #pragma omp parallel\
-    default(shared)\
-    private(time, to, pix_data)\
-    shared(image, height,width,camera_params, renderer_params, from, farPoint)
+  	default(shared)\
+  	private(time, to, pix_data)\
+  	shared(image, height,width,camera_params, renderer_params, from, farPoint)
 
 	#pragma omp for schedule (guided)	
-  for(long int j = 0; j < image_size; j++)
-    {
+  	for(long int j = 0; j < image_size; j++)
+  	{
 
       //for each column pixel in the row
-	long int jay = (j/(width));
-	long int eye = j%width;
+  		register unsigned long int jay = (j/(width));
+  		register unsigned long int eye = j%width;
 
-//if (jay != ((j-1)/width)) printf("jay: %ld eye: %ld \n",jay,eye); 
+  		vec3 color;
+  		if( renderer_params.super_sampling == 1 )
+  		{
+  			vec3 samples[9];
+  			register unsigned int idx = 0;
+  			for(int ssj = -1; ssj < 2; ssj++){
+  				for(int ssi = -1; ssi< 2; ssi++){
+  					UnProject(eye+ssi*0.5, jay+ssj*0.5, camera_params, farPoint);
 
-	vec3 color;
-	  if( renderer_params.super_sampling == 1 )
-	    {
-	      vec3 samples[9];
-	      int idx = 0;
-	      for(int ssj = -1; ssj < 2; ssj++){
-		  for(int ssi = -1; ssi< 2; ssi++){
-		  UnProject(eye+ssi*0.5, jay+ssj*0.5, camera_params, farPoint);
-		  
 		  // to = farPoint - camera_params.camPos
-		  to = SubtractDoubleDouble(farPoint,camera_params.camPos);
-		  to.Normalize();
-		  
+  					to = SubtractDoubleDouble(farPoint,camera_params.camPos);
+  					to.Normalize();
+
 		  //render the pixel
-		  rayMarch(renderer_params, from, to, pix_data);
-		  
+  					rayMarch(renderer_params, from, to, pix_data);
+
 		  //get the colour at this pixel
-		  samples[idx] = getColour(pix_data, renderer_params, from, to);
-		  idx++;
-		}
-	      }
-	      color = (samples[0]*0.05 + samples[1]*0.1 + samples[2]*0.05 + 
-		       samples[3]*0.1  + samples[4]*0.4 + samples[5]*0.1  + 
-		       samples[6]*0.05 + samples[7]*0.1 + samples[8]*0.05);
-	      
-	    }
-	  else
-	    {
+  					samples[idx] = getColour(pix_data, renderer_params, from, to);
+  					idx++;
+  				}
+  			}
+  			color = (samples[0]*0.05 + samples[1]*0.1 + samples[2]*0.05 + 
+  				samples[3]*0.1  + samples[4]*0.4 + samples[5]*0.1  + 
+  				samples[6]*0.05 + samples[7]*0.1 + samples[8]*0.05);
+
+  		}
+  		else
+  		{
 	      // get point on the 'far' plane
 	      // since we render one frame only, we can use the more specialized method
-	      UnProject(eye, jay, camera_params, farPoint);
-	      
-	      // to = farPoint - camera_params.camPos
-	      to = SubtractDoubleDouble(farPoint,camera_params.camPos);
-	      to.Normalize();
-	      
-	      //render the pixel
-	      rayMarch(renderer_params, from, to, pix_data);
-	      
-	      //get the colour at this pixel
-	      color = getColour(pix_data, renderer_params, from, to);
-	    }
-	  
-	  //save colour into texture
-	  int k = (jay * width + eye)*3;
-	  image[k+2] = (unsigned char)(color.x * 255);
-	  image[k+1] = (unsigned char)(color.y * 255);
-	  image[k]   = (unsigned char)(color.z * 255);
-	
-    if (jay == (jay-1))  
-    printProgress((jay+1)/(double)height,getTime()-time);
-    }
+  			UnProject(eye, jay, camera_params, farPoint);
 
-  printf("\n rendering done:\n");
-}
+	      // to = farPoint - camera_params.camPos
+  			to = SubtractDoubleDouble(farPoint,camera_params.camPos);
+  			to.Normalize();
+
+	      //render the pixel
+  			rayMarch(renderer_params, from, to, pix_data);
+
+	      //get the colour at this pixel
+  			color = getColour(pix_data, renderer_params, from, to);
+  		}
+
+	  //save colour into texture
+  		register unsigned int k = (jay * width + eye)*3;
+  		image[k+2] = (unsigned char)(color.x * 255);
+  		image[k+1] = (unsigned char)(color.y * 255);
+  		image[k]   = (unsigned char)(color.z * 255);
+
+  		if (jay == (jay-1))  
+  			//printProgress((jay+1)/(double)height,getTime()-time);
+  	}
+
+  	printf("\n rendering done:\n");
+  }

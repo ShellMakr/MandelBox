@@ -1,10 +1,9 @@
 /*
  *	Iheatu Wogu 	: 0850010
  * 	Warren 			: 1131525
- *  Graeme 			:
- *  Maciej 			:	 
+ *  Graeme 			: 1153121
+ *  Maciej 			: 0947341
  */
-
 
 /*
  *	mpiwrapper.cc
@@ -26,69 +25,83 @@
 #include <string.h>
 #include <iostream>
 #include <fstream>
+#include <unistd.h>
 #include "mpi.h"
+
 
 #define BUF_SIZE 1024
 
-static char buf[BUF_SIZE];
-char * filename = "params.dat";
-char * newparams = (char*) calloc(40, sizeof(char));
-int fractal_dec = 0.01137;
+ static char buf[BUF_SIZE];
+ char * filename = "params.dat";
+ char * newparams = (char*) calloc(40, sizeof(char));
+ char * image_name = (char*) calloc(40, sizeof(char));
+ int fractal_dec = 0.01137;
 
 
 
-
-int main(int argc, char* argv[]) {
+ int main(int argc, char* argv[]) {
 
 	int my_rank; 			/* rank of process */
-	int p; 					/* number of processes */
+	int p; 				/* number of processes */
 	int tag = 0; 			/* tag for messages */
 	MPI_Status status; 		/* status for receive */
-	char * command = (char*) calloc(40, sizeof(char));
-	int start;
-	int end;
+ 	char * command = (char*) calloc(40, sizeof(char));
+ 	unsigned int start;
+ 	unsigned int end;
 
 
 
-	MPI_Init(&argc, &argv);
-	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-	MPI_Comm_size(MPI_COMM_WORLD, &p);
+ 	MPI_Init(&argc, &argv);
+ 	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+ 	MPI_Comm_size(MPI_COMM_WORLD, &p);
 
 	// pass in range of images that mpi is too compute
-	start = atoi(argv[1]);
-	end = atoi(argv[2]);
-	int block = (end - start)/ p;
+ 	start = atoi(argv[1]);
+ 	end = atoi(argv[2]);
+ 	int block = (end - start)/ p;
 
 
 	// this computes the mandelbrot images for a range
 	// defined for each process
-	for (int i = start + (block*my_rank); i < start + ((my_rank+1)*block); i++)
-	{
+ 	for (int i = start + (block*my_rank); i < start + ((my_rank+1)*block); i++)
+ 	{
 
-		sprintf(newparams,"params/params%d.dat",i);
-		sprintf(command, "./mandelbox %s", newparams);
-		printf("made image%d\n",i);
+ 		sprintf(newparams,"params/params%d.dat",i);
+
+ 		//check for image
+ 		sprintf(image_name,"image%d.bmp",i);		 		
+
+ 		if( access(image_name, F_OK ) != -1 ) {
+ 			continue; }
+
+ 		sprintf(command, "./mandelbox %s", newparams);
+
+ 		printf("made image%d\n",i);
 		//call the command to make the mandelbrot image
-		system(command);
-	}
+ 		system(command);
+ 	}
 
 	// this gives remainder images to the first process to computes
-	if (my_rank == 0) {
+ 	if (my_rank == 0) {
 
-		int initial = start + (block * p);
-		for (int i = initial; i < end; i++)
-		{
-			sprintf(newparams,"params/params%d.dat",i);
-			sprintf(command, "./mandelbox %s", newparams);
-			printf("made image%d\n",i);
-			//call the command to make the mandelbrot image
-			system(command);
-		}
-	}
+ 		int initial = start + (block * p);
+ 		for (int i = initial; i < end; i++)
+ 		{
+ 			sprintf(newparams,"params/params%d.dat",i);
 
+ 			sprintf(image_name,"image%d.bmp",i);
 
+ 			if( access(image_name, F_OK ) != -1 ) {
+ 				continue;}
 
-	MPI_Finalize();
-	return 0;
+ 			sprintf(command, "./mandelbox %s", newparams);
+ 			printf("made image%d\n",i);
+	//call the command to make the mandelbrot image
+ 			system(command);
+ 		}
+ 	}
 
-}
+ 	MPI_Finalize();
+ 	return 0;
+
+ }

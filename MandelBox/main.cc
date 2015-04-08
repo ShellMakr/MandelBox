@@ -23,8 +23,8 @@
 /**
  *  C Optimizations
  *
- *  The main optimizations made in the code itself was
- *  inlining functions used by the "main functions" from 
+ *  The main optimizations made in the code itself are
+ *  inlining functions used by the "main functions".
  *  
  * 
  */
