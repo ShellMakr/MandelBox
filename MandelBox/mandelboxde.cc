@@ -92,7 +92,7 @@ double MandelBoxDE(const vec3 &p0, const MandelBoxParams &params)
   r2 = p.Magnitude();
   //assert(r2>=0);
   
-  return (double*)((r2 - c1) / dfactor - c2);
+  return (double)((r2 - c1) / dfactor - c2);
 }
 
 
