@@ -97,13 +97,12 @@ int main(int argc, char* argv[]) {
 	// gets information from the base param file
 	getParameters("baseParams.dat", &cam_p, &ren_p, &man_p);
 
-	int start_file = atoi(argv[1]);
-	int end_files = atoi(argv[2]);
+	int end_files = atoi(argv[1]);
 
 
 
 
-	for (int i = start_file; i < end_files; i++) {
+	for (int i = 0; i < end_files; i++) {
 
 		sprintf(param_name, "params%d.dat", i);
 		sprintf(image_name, "image%d.bmp", i);
@@ -131,12 +130,49 @@ int main(int argc, char* argv[]) {
 
 
 		} else if ( i >= 1275 && i < 1875 ) {
-			cam_p.camPos[1] -= 0.006;
+			cam_p.camPos[1] -= 0.0069;
 
 		} else if (i>= 1875 && i < 2205 ) {
 
-			cam_p.camTarget[2] += 0.025;
+			//cam_p.camTarget[2] -= 0.025;
 			cam_p.camPos[2] -= 0.006;
+		}
+		else if (i>=2205&&i<2895){
+			cam_p.camTarget[1]+=0.00525;
+			cam_p.camPos[0]-=0.006;
+		}
+		else if (i>=2895 && i<3225){
+			cam_p.camPos[2]+=0.006;
+		}
+		else if (i>=3225 && i<3630){
+			cam_p.camTarget[1]-=0.00832716;
+			cam_p.camPos[1]+=0.0069;
+		}
+		else if (i>=3630&&i<3780){
+			cam_p.camTarget[1]+=0.03777777;
+			cam_p.camTarget[2]+=0.025;
+			cam_p.camPos[1]+=0.0069;
+		}
+		else if (i>=3780 && i <4530){
+			cam_p.camTarget[1]-=0.03777777;
+			cam_p.camPos[2]-=0.006;
+		}
+		else if (i>=4530 && i < 5580 ){
+			
+			cam_p.camTarget[0]-=0.03777777;
+			cam_p.camPos[1]-=0.002;
+
+		} else if (i >= 5580 &&  i < 6060 ) {
+
+			cam_p.camTarget[2]+=0.097;
+			cam_p.camPos[0]-=0.002;
+			cam_p.camPos[2]+=0.007;
+
+		} else if ( i >= 6060 && i < 7560 ) {
+
+			cam_p.camTarget[2] -= 0.091;
+			cam_p.camPos[1] -= 0.001777777;
+			man_p.rMin += -0.0015;
 		}
 
 
