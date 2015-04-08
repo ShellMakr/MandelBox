@@ -129,7 +129,7 @@
   		image[k]   = (unsigned char)(color.z * 255);
 
   		if (jay == (jay-1))  
-  			//printProgress((jay+1)/(double)height,getTime()-time);
+  			printProgress((jay+1)/(double)height,getTime()-time);
   	}
 
   	printf("\n rendering done:\n");
